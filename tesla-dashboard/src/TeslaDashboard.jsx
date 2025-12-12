@@ -1,11 +1,11 @@
 import React from 'react';
 import {
     LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    ComposedChart, Area, ReferenceLine, Cell, AreaChart
+    ComposedChart, Area, ReferenceLine, AreaChart
 } from 'recharts';
 import {
-    TrendingUp, TrendingDown, DollarSign, Activity, Percent, Briefcase,
-    ArrowUpRight, ArrowDownRight, Layers, PieChart
+    DollarSign, Activity, Percent, Briefcase,
+    ArrowUpRight, ArrowDownRight
 } from 'lucide-react';
 
 // --- Data Processing (Hardcoded from provided CSVs) ---
