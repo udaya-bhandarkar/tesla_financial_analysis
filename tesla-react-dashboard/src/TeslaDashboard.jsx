@@ -199,9 +199,9 @@ export default function TeslaDashboard() {
             {/* --- Top Navigation / Header --- */}
             <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-16">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 text-red-600">
+                    <div className="flex flex-col sm:flex-row justify-between items-center min-h-16 py-3 gap-2 sm:gap-0">
+                        <div className="flex items-center gap-3 w-full sm:w-auto">
+                            <div className="w-8 h-8 text-red-600 flex-shrink-0">
                                 <svg role="img" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <title>Tesla</title>
                                     <path d="M12 5.362l2.475-3.026s4.245.09 8.471 2.054c-1.082 1.636-3.231 2.438-3.231 2.438-.146-1.439-1.154-1.79-4.354-1.79L12 24 8.619 5.034c-3.18 0-4.188.354-4.335 1.792 0 0-2.146-.795-3.229-2.43C5.28 2.431 9.525 2.34 9.525 2.34L12 5.362l-.004.002H12v-.002zm0-3.899c3.415-.03 7.326.528 11.328 2.28.535-.968.672-1.395.672-1.395C19.625.612 15.528.015 12 0 8.472.015 4.375.61 0 2.349c0 0 .195.525.672 1.396C4.674 1.989 8.585 1.435 12 1.46v.003z" />
@@ -212,7 +212,7 @@ export default function TeslaDashboard() {
                                 <p className="text-xs text-slate-500">Tesla, Inc. | FY 2018 - 2020</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="hidden sm:flex items-center gap-4">
                             <span className="text-xs font-medium px-3 py-1 bg-slate-100 text-slate-600 rounded-full">
                                 Source: SEC 10-K filings (2018-2020)
                             </span>
