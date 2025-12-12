@@ -4,7 +4,7 @@ import {
     ComposedChart, Area, ReferenceLine, AreaChart
 } from 'recharts';
 import {
-    DollarSign, Activity, Percent, Briefcase,
+    DollarSign, Activity, Percent, Briefcase, Globe,
     ArrowUpRight, ArrowDownRight
 } from 'lucide-react';
 
@@ -159,32 +159,36 @@ const SectionHeader = ({ title, subtitle }) => (
 const CustomTooltip = ({ active, payload, label, unit = '', prefix = '' }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-800 text-white p-3 rounded-lg shadow-lg border border-slate-700 text-xs">
-                <p className="font-bold mb-2 text-slate-300">{label}</p>
-                {payload.map((entry, index) => {
-                    let displayValue = entry.value;
-                    let displayUnit = unit;
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs min-w-[180px] shadow-[0_4px_12px_rgba(0,0,0,0.06)]">
+                <p className="font-bold mb-3 text-slate-700 text-sm border-b border-slate-200 pb-2">{label}</p>
+                <div className="space-y-2">
+                    {payload.map((entry, index) => {
+                        let displayValue = entry.value;
+                        let displayUnit = unit;
 
-                    if (typeof entry.value === 'number') {
-                        // Auto-format millions to billions if > 1000 (ignoring sign)
-                        if (Math.abs(entry.value) >= 1000 && (unit === 'M' || unit === '')) {
-                            displayValue = (entry.value / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 });
-                            displayUnit = 'B';
-                        } else {
-                            displayValue = entry.value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                        if (typeof entry.value === 'number') {
+                            // Auto-format millions to billions if > 1000 (ignoring sign)
+                            if (Math.abs(entry.value) >= 1000 && (unit === 'M' || unit === '')) {
+                                displayValue = (entry.value / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 });
+                                displayUnit = 'B';
+                            } else {
+                                displayValue = entry.value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                            }
                         }
-                    }
 
-                    return (
-                        <div key={index} className="flex items-center gap-2 mb-1">
-                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                            <span className="opacity-75">{entry.name}:</span>
-                            <span className="font-mono font-medium">
-                                {prefix}{displayValue}{displayUnit}
-                            </span>
-                        </div>
-                    );
-                })}
+                        return (
+                            <div key={index} className="flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full ring-1 ring-slate-300" style={{ backgroundColor: entry.color }} />
+                                    <span className="text-slate-500 font-medium">{entry.name}</span>
+                                </div>
+                                <span className="font-mono font-bold text-slate-700">
+                                    {prefix}{displayValue}{displayUnit}
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         );
     }
@@ -195,7 +199,7 @@ export default function TeslaDashboard() {
 
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
+        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-4">
             {/* --- Top Navigation / Header --- */}
             <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -275,6 +279,7 @@ export default function TeslaDashboard() {
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                                     <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
                                     <YAxis
+                                        yAxisId="left"
                                         axisLine={false}
                                         tickLine={false}
                                         tick={{ fill: '#64748b', fontSize: 12 }}
@@ -282,11 +287,19 @@ export default function TeslaDashboard() {
                                         domain={[0, 40000]}
                                         ticks={[0, 10000, 20000, 30000, 40000]}
                                     />
+                                    <YAxis
+                                        yAxisId="right"
+                                        orientation="right"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#10b981', fontSize: 12 }}
+                                        tickFormatter={(val) => `$${val}M`}
+                                    />
                                     <Tooltip content={<CustomTooltip prefix="$" unit="M" />} />
                                     <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-                                    <Bar dataKey="revenue" name="Total Revenue" fill="#1e293b" radius={[4, 4, 0, 0]} barSize={40} />
-                                    <Bar dataKey="grossProfit" name="Gross Profit" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={40} />
-                                    <Line type="monotone" dataKey="netIncome" name="Net Income" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} />
+                                    <Bar yAxisId="left" dataKey="revenue" name="Total Revenue" fill="#1e293b" radius={[4, 4, 0, 0]} barSize={40} />
+                                    <Bar yAxisId="left" dataKey="grossProfit" name="Gross Profit" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={40} />
+                                    <Line yAxisId="right" type="monotone" dataKey="netIncome" name="Net Income" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} />
                                 </ComposedChart>
                             </ResponsiveContainer>
                         </div>
@@ -302,13 +315,43 @@ export default function TeslaDashboard() {
                                     <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
                                     <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} tickFormatter={(val) => `${val}%`} />
                                     <Tooltip content={<CustomTooltip unit="%" />} />
-                                    <Legend iconType="plainline" wrapperStyle={{ paddingTop: '20px' }} />
+                                    <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
                                     <ReferenceLine y={0} stroke="#94a3b8" />
                                     <Line type="monotone" dataKey="grossMargin" name="Gross Margin" stroke="#ef4444" strokeWidth={2} dot={{ r: 4 }} />
-                                    <Line type="monotone" dataKey="operatingMargin" name="Operating Margin" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} />
+                                    <Line type="monotone" dataKey="operatingMargin" name="Operating Margin" stroke="#1e293b" strokeWidth={2} dot={{ r: 4 }} />
                                     <Line type="monotone" dataKey="netMargin" name="Net Margin" stroke="#10b981" strokeWidth={2} dot={{ r: 4 }} />
                                 </LineChart>
                             </ResponsiveContainer>
+                        </div>
+                    </div>
+                </div>
+
+                {/* --- Key Strategic Insight: Profitability --- */}
+                <div className="bg-white border border-slate-100 shadow-sm p-6 rounded-xl mb-8">
+                    <div className="flex items-start gap-4">
+                        <div className="p-3 bg-slate-50 border border-slate-100 rounded-lg hidden sm:block">
+                            <Globe className="w-6 h-6 text-red-600" />
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+                                <Globe className="w-5 h-5 text-red-600 sm:hidden" />
+                                A Defining Year: Global Scale & Efficiency
+                            </h3>
+                            <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                                Tesla’s shift toward profitability is an important turning point, made possible in large part by rising sales in <strong>China and Europe</strong>, and the addition of the <strong>Model Y</strong>. Despite a challenging environment, 2020 was a defining year with delivery of nearly half a million cars—a 36% increase fueled by the Shanghai factory.
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="bg-slate-50 p-3 rounded border border-slate-200">
+                                    <p className="text-xs text-slate-500 font-semibold uppercase">2020 Deliveries</p>
+                                    <p className="text-emerald-600 font-bold text-lg">499,550</p>
+                                    <p className="text-xs text-emerald-600 font-medium">↑ 36% YoY Growth</p>
+                                </div>
+                                <div className="bg-slate-50 p-3 rounded border border-slate-200">
+                                    <p className="text-xs text-slate-500 font-semibold uppercase">Key Drivers</p>
+                                    <p className="text-slate-700 font-bold text-lg">China & Model Y</p>
+                                    <p className="text-xs text-slate-500">Shanghai Factory Scale-up</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
