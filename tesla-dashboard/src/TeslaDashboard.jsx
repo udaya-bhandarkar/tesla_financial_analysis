@@ -161,15 +161,30 @@ const CustomTooltip = ({ active, payload, label, unit = '', prefix = '' }) => {
         return (
             <div className="bg-slate-800 text-white p-3 rounded-lg shadow-lg border border-slate-700 text-xs">
                 <p className="font-bold mb-2 text-slate-300">{label}</p>
-                {payload.map((entry, index) => (
-                    <div key={index} className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                        <span className="opacity-75">{entry.name}:</span>
-                        <span className="font-mono font-medium">
-                            {prefix}{typeof entry.value === 'number' ? entry.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : entry.value}{unit}
-                        </span>
-                    </div>
-                ))}
+                {payload.map((entry, index) => {
+                    let displayValue = entry.value;
+                    let displayUnit = unit;
+
+                    if (typeof entry.value === 'number') {
+                        // Auto-format millions to billions if > 1000 (ignoring sign)
+                        if (Math.abs(entry.value) >= 1000 && (unit === 'M' || unit === '')) {
+                            displayValue = (entry.value / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 });
+                            displayUnit = 'B';
+                        } else {
+                            displayValue = entry.value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                        }
+                    }
+
+                    return (
+                        <div key={index} className="flex items-center gap-2 mb-1">
+                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                            <span className="opacity-75">{entry.name}:</span>
+                            <span className="font-mono font-medium">
+                                {prefix}{displayValue}{displayUnit}
+                            </span>
+                        </div>
+                    );
+                })}
             </div>
         );
     }
@@ -259,7 +274,14 @@ export default function TeslaDashboard() {
                                 <ComposedChart data={processedData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                                     <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} tickFormatter={(val) => `$${val / 1000}k`} />
+                                    <YAxis
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#64748b', fontSize: 12 }}
+                                        tickFormatter={(val) => `$${val / 1000}B`}
+                                        domain={[0, 40000]}
+                                        ticks={[0, 10000, 20000, 30000, 40000]}
+                                    />
                                     <Tooltip content={<CustomTooltip prefix="$" unit="M" />} />
                                     <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
                                     <Bar dataKey="revenue" name="Total Revenue" fill="#1e293b" radius={[4, 4, 0, 0]} barSize={40} />
@@ -354,65 +376,7 @@ export default function TeslaDashboard() {
                     </div>
                 </div>
 
-                {/* Section 3: Efficiency & Operations */}
-                <SectionHeader title="Operational Efficiency" subtitle="Management effectiveness in utilizing assets and inventory." />
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                    {/* Efficiency Metric 1 */}
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between">
-                        <div>
-                            <h4 className="text-slate-500 text-xs font-bold uppercase mb-2">Inventory Turnover</h4>
-                            <div className="text-3xl font-bold text-slate-900">{latestYear.inventoryTurnover.toFixed(1)}x</div>
-                            <p className="text-xs text-slate-400 mt-1">Cost of Goods / Avg Inventory</p>
-                        </div>
-                        <div className="mt-4 h-24">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={processedData}>
-                                    <Line type="monotone" dataKey="inventoryTurnover" stroke="#3b82f6" strokeWidth={2} dot={false} />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-
-                    {/* Efficiency Metric 2 */}
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between">
-                        <div>
-                            <h4 className="text-slate-500 text-xs font-bold uppercase mb-2">Days Sales Outstanding (DSO)</h4>
-                            <div className="text-3xl font-bold text-slate-900">{latestYear.dso.toFixed(0)} <span className="text-base font-normal text-slate-500">days</span></div>
-                            <p className="text-xs text-slate-400 mt-1">Time to collect receivables</p>
-                        </div>
-                        <div className="mt-4 h-24">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={processedData}>
-                                    <Bar dataKey="dso" fill="#f59e0b" radius={[2, 2, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-
-                    {/* Efficiency Metric 3 */}
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between">
-                        <div>
-                            <h4 className="text-slate-500 text-xs font-bold uppercase mb-2">Asset Turnover</h4>
-                            <div className="text-3xl font-bold text-slate-900">{latestYear.assetTurnover.toFixed(2)}</div>
-                            <p className="text-xs text-slate-400 mt-1">Revenue / Avg Total Assets</p>
-                        </div>
-                        <div className="mt-4 h-24">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={processedData}>
-                                    <defs>
-                                        <linearGradient id="colorAsset" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <Area type="monotone" dataKey="assetTurnover" stroke="#6366f1" fill="url(#colorAsset)" />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-
-                </div>
 
             </main>
         </div>
