@@ -214,7 +214,7 @@ export default function TeslaDashboard() {
                         </div>
                         <div className="flex items-center gap-4">
                             <span className="text-xs font-medium px-3 py-1 bg-slate-100 text-slate-600 rounded-full">
-                                Source: Audited Financials
+                                Source: SEC 10-K filings (2018-2020)
                             </span>
 
                         </div>
