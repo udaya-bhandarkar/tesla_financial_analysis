@@ -1,6 +1,6 @@
 # Tesla Financial Performance Dashboard
 
-An interactive, enterprise-grade financial analysis dashboard visualizing Tesla's financial performance from 2018 to 2020. This project transforms raw financial statement data into actionable insights using React and data visualization best practices.
+An interactive, enterprise-grade financial analysis dashboard visualizing Tesla's financial performance from 2018 to 2020. This project transforms raw financial statement data from SEC - 10K form into actionable insights using Python for data cleaning and Tableau & React for data visualization.
 
 ## Features
 
