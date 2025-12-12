@@ -7,6 +7,5 @@ An interactive, enterprise-grade financial analysis dashboard visualizing Tesla'
 * **Executive KPI Cards**: Immediate view of critical metrics (Revenue, Net Income, Gross Margin) with Year-over-Year trend indicators.
 * **Profitability Analysis**: Composed charts comparing Revenue vs. Costs and resulting Net Income.
 * **Ratio Analysis**: Visual breakdown of key financial ratios including Liquidity (Current/Quick ratios) and Solvency (Debt-to-Equity).
-* **Operational Efficiency**: Sparkline-style visuals for Inventory Turnover, Asset Turnover, and Day Sales Outstanding (DSO).
 * **Interactive Tooltips**: detailed financial data on hover for all charts.
 * **Responsive Design**: Fully responsive layout optimized for desktop and tablet viewing.
