@@ -329,12 +329,11 @@ export default function TeslaDashboard() {
                 {/* --- Key Strategic Insight: Profitability --- */}
                 <div className="bg-white border border-slate-100 shadow-sm p-6 rounded-xl mb-8">
                     <div className="flex items-start gap-4">
-                        <div className="p-3 bg-slate-50 border border-slate-100 rounded-lg hidden sm:block">
+                        <div className="p-3 bg-slate-50 border border-slate-100 rounded-lg">
                             <Globe className="w-6 h-6 text-red-600" />
                         </div>
                         <div className="flex-1">
-                            <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-                                <Globe className="w-5 h-5 text-red-600 sm:hidden" />
+                            <h3 className="text-lg font-bold text-slate-800 mb-2">
                                 A Defining Year: Global Scale & Efficiency
                             </h3>
                             <p className="text-slate-600 text-sm leading-relaxed mb-4">
